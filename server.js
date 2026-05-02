@@ -13,35 +13,40 @@ app.get("/", (req, res) => {
   res.send("Server Working 🚀");
 });
 
-// Careerjet API route
+// 🔥 Adzuna Jobs API (India)
 app.get("/jobs", async (req, res) => {
   try {
     const response = await axios.get(
-      "http://public.api.careerjet.net/search",
+      "https://api.adzuna.com/v1/api/jobs/in/search/1",
       {
         params: {
-          keywords: "developer",
-          location: "India",
-          page: 4,
-          pagesize: 80,
-          affid: process.env.API_KEY,
-
-          // REQUIRED
-          user_ip: req.ip || "127.0.0.1",
-          user_agent: req.headers["user-agent"] || "Mozilla/5.0",
+          app_id: process.env.APP_ID,
+          app_key: process.env.APP_KEY,
+          results_per_page: 50,
+          what: "developer",
+          where: "India",
         },
-        headers: {
+          headers: {
           Referer: process.env.BASE_URL || ""
-        }
+    }
       }
     );
 
     console.log("FULL DATA:", response.data);
 
-    res.json(response.data);
+    // 🔥 Convert to YOUR frontend format
+    const jobs = response.data.results.map((job) => ({
+      title: job.title,
+      company: job.company?.display_name || "Unknown",
+      locations: job.location?.display_name || "India",
+      url: job.redirect_url,
+      description: job.description,
+      salary: job.salary_min
+        ? `₹${job.salary_min} - ₹${job.salary_max || job.salary_min}`
+        : "Not specified",
+    }));
 
-
-
+    res.json({ jobs });
 
   } catch (error) {
     console.log("ERROR:", error.response?.data || error.message);
@@ -52,5 +57,5 @@ app.get("/jobs", async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log('Server running on port ${PORT}');
+  console.log(`Server running on port ${PORT}`);
 });
