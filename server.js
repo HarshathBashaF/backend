@@ -30,19 +30,19 @@ app.get("/jobs", async (req, res) => {
           user_ip: req.ip || "127.0.0.1",
           user_agent: req.headers["user-agent"] || "Mozilla/5.0",
         },
-         headers: {
-          Referer: "http://localhost:5000/",
-        },
+        headers: {
+          Referer: process.env.BASE_URL || ""
+        }
       }
     );
 
     console.log("FULL DATA:", response.data);
 
     res.json(response.data);
-    
 
 
-    
+
+
   } catch (error) {
     console.log("ERROR:", error.response?.data || error.message);
     res.status(500).json({ error: "API Failed" });
