@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 app.get("/jobs", async (req, res) => {
   try {
     const response = await axios.get(
-      "https://public.api.careerjet.net/search",
+      "http://public.api.careerjet.net/search",
       {
         params: {
           keywords: "developer",
